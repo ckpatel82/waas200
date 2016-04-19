@@ -114,6 +114,13 @@
                 "description": "Authentication Type to chose for the Virtual Machines"
             }
         },
+        "customData": {
+           "type": "string",
+           "defaultValue": "CentralManagerIPAddress",
+           "metadata": {
+           "description": "String passed down to the Virtual Machine."
+           }
+       },
         "vmName": {
             "type": "string",
             "defaultValue": "WAAS200",
