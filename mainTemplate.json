@@ -189,7 +189,7 @@
         },
         "baseUrl": {
             "type": "string",
-            "defaultValue": "https://github.com/ckpatel82/waas200/raw/master"
+            "defaultValue": "https://github.com/ckpatel82/waas200/raw/master",
             "metadata": {
                 "artifactsBaseUrl": "",
                 "description": "URL to acquire other templates"
