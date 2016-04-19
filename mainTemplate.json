@@ -221,6 +221,7 @@
         }
     },
     "variables": {
+    	"osType": "Linux",
         "imagePublisher": "cisco",
         "imageOffer": "cisco-waas",
         "imageSKU": "waas-200-byol",
