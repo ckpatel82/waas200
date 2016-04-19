@@ -8,6 +8,12 @@
                 "description": "Deployment location"
             }
         },
+        "osDiskVhdUri": {
+            "type": "string",
+            "metadata": {
+            "description": "Uri of the existing VHD"
+            }
+        },
         "virtualNetworkName": {
             "type": "string",
             "defaultValue": "WAAS_Network",
@@ -183,7 +189,7 @@
         },
         "baseUrl": {
             "type": "string",
-            "defaultValue": "",
+            "defaultValue": "https://github.com/ckpatel82/waas200/raw/master"
             "metadata": {
                 "artifactsBaseUrl": "",
                 "description": "URL to acquire other templates"
@@ -205,6 +211,8 @@
         "imageOffer": "cisco-waas",
         "imageSKU": "waas-200-byol",
         "OSDiskName": "[concat(parameters('vmName'),'-disk')]",
+        "osDiskVhdName": "[concat('http://',parameters('StorageAccountName'),'.blob.core.windows.net/vhds/',parameters('vmName'),'osDisk.vhd')]",
+        "dataDiskVhdName": "[concat('http://',parameters('StorageAccountName'),'.blob.core.windows.net/vhds/',parameters('vmName'),'dataDisk.vhd')]",
         "vmStorageAccountContainerName": "vhds",
         "vnetID": "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworkName'))]",
         "subnet1Ref": "[concat(variables('vnetID'),'/subnets/', parameters('Subnet1Name'))]",
@@ -220,6 +228,7 @@
         "osProfilesshPublicKey": {
             "computername": "[parameters('vmName')]",
             "adminUsername": "[parameters('adminUsername')]",
+            "customData": "[base64(parameters('customData'))]",
             "linuxConfiguration": {
                 "disablePasswordAuthentication": "true",
                 "ssh": {
@@ -235,7 +244,8 @@
         "osProfilepassword": {
             "computername": "[parameters('vmName')]",
             "adminUsername": "[parameters('adminUsername')]",
-            "adminPassword": "[parameters('adminPassword')]"
+            "adminPassword": "[parameters('adminPassword')]",
+            "customData": "[base64(parameters('customData'))]"
         }
     },
     "resources": [
@@ -448,19 +458,28 @@
                 },
                 "osProfile": "[variables('osProfile')]",
                 "storageProfile": {
-                    "imageReference": {
-                        "publisher": "[variables('imagePublisher')]",
-                        "offer": "[variables('imageOffer')]",
-                        "sku": "[variables('imageSKU')]",
-                        "version": "latest"
-                    },
-                    "osDisk": {
-                        "name": "[variables('OSDiskName')]",
+                    "dataDisks": [
+	                {
+                        "name": "dataDisk",
+                        "diskSizeGB": "[parameters('sizeOfDataDiskInGB')]",
+                        "lun": 0,
                         "vhd": {
-                            "uri": "[concat('http://',parameters('newStorageAccountName'),'.blob.core.windows.net/vhds/', variables('OSDiskName'), '.vhd')]"
+                            "Uri": "[variables('dataDiskVhdName')]"
                         },
+                        "createOption": "Empty"
+	                }
+	                ],
+                    "osDisk": {
+                        "name": "[concat(parameters('vmName'),'-osDisk')]",
+                        "osType": "[variables('osType')]",
                         "caching": "ReadWrite",
-                        "createOption": "FromImage"
+                        "createOption": "FromImage",
+                        "image": {
+                            "uri": "[parameters('osDiskVhdUri')]"
+                        },
+                        "vhd": {
+                        "uri": "[variables('osDiskVhdName')]"
+                        }
                     }
                 },
                 "networkProfile": {
