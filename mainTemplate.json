@@ -204,6 +204,13 @@
             "metadata" : {
                 "description" : "Size of the Virtual Machine"
             }
+        },
+        "sizeOfDataDiskInGB": {
+            "type": "string",
+            "defaultValue" : "160",
+            "metadata": {
+            "description": "Size of each data disk in GB"
+            }
         }
     },
     "variables": {
